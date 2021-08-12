@@ -1,6 +1,6 @@
 {
   "name": "@cjaas/customer-journey-widget",
-  "version": "4.0.1",
+  "version": "5.0.1",
   "author": {
     "name": "Kevin Hyde",
     "email": "kehyde@cisco.com"
@@ -105,6 +105,8 @@
   "dependencies": {
     "@types/eventsource": "^1.1.5",
     "eventsource": "^1.1.0",
-    "lit": "^2.0.0-rc.2"
+    "lit": "^2.0.0-rc.2",
+    "@wxcc-desktop/sdk": "^1.2.7",
+    "@wxcc-desktop/sdk-types": "^1.0.3"
   }
 }
