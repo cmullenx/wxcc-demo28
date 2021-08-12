@@ -21,14 +21,13 @@ export interface CustomerEvent {
     type: string;
 }
 export default class CustomerJourneyWidget extends LitElement {
-    responseData: any;
+    showSummary: boolean;
     subscribeAgentContactDataEvents(): void;
     static get styles(): import("lit-element").CSSResult;
     constructor();
     firstUpdated(changeProperties: PropertyValues): Promise<void>;
     disconnectedCallback(): void;
     handleButtonClick(): void;
-    showSummary: boolean;
     textToEdit: string;
     render(): import("lit-element").TemplateResult;
 }

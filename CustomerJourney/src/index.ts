@@ -46,7 +46,7 @@ export interface CustomerEvent {
 export default class CustomerJourneyWidget extends LitElement {
   
 
-    @internalProperty() responseData: any;
+    @property() showSummary = false
 
 
   subscribeAgentContactDataEvents() {
@@ -67,8 +67,7 @@ export default class CustomerJourneyWidget extends LitElement {
     Desktop.agentStateInfo.addEventListener("updated", (updatedList: any) => {
       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ agent state updated $$$$$$$$$$$$$$$$$$$$$"); 
       });
-
-
+      this.showSummary = true
   }
 
   static get styles() {
@@ -102,7 +101,7 @@ export default class CustomerJourneyWidget extends LitElement {
     this.showSummary = false
   }
 
-  @property() showSummary = true
+ 
 
  @property() textToEdit = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies lorem sem, id placerat massa rutrum eu. Sed dui neque,
   tincidunt quis sapien in, aliquam dignissim nulla. Vestibulum mollis at orci ac facilisis. Sed ut aliquam nunc. Suspendisse eu interdum odio. Sed libero dui, malesuada ac vulputate id,
