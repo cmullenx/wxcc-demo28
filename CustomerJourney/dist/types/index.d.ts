@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { LitElement } from "lit-element";
+import { LitElement, PropertyValues } from "lit-element";
 import "@cjaas/common-components/dist/comp/cjaas-timeline-item";
 export interface CustomerEvent {
     data: Record<string, any>;
@@ -24,7 +24,8 @@ export default class CustomerJourneyWidget extends LitElement {
     responseData: any;
     subscribeAgentContactDataEvents(): void;
     static get styles(): import("lit-element").CSSResult;
-    connectedCallback(): Promise<void>;
+    constructor();
+    firstUpdated(changeProperties: PropertyValues): Promise<void>;
     disconnectedCallback(): void;
     handleButtonClick(): void;
     showSummary: boolean;

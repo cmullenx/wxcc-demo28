@@ -28,8 +28,6 @@ import "@cjaas/common-components/dist/comp/cjaas-timeline-item";
 
 import { Desktop } from "@wxcc-desktop/sdk";
 import { Service } from "@wxcc-desktop/sdk-types";
-
-const logger = Desktop.logger.createLogger("my-custom-component");
 export interface CustomerEvent {
   data: Record<string, any>;
   firstName: string;
@@ -56,18 +54,19 @@ export default class CustomerJourneyWidget extends LitElement {
     Desktop.agentContact.addEventListener(
       "eAgentContactEnded",
       (msg: Service.Aqm.Contact.AgentContact) => {
-        logger.info("AgentContact eAgentContactEnded: ", msg);
-        this.responseData = msg.data;
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact ended$$$$$$$$$$$$$$$$$$$$$"); 
       }
     );
     Desktop.agentContact.addEventListener(
       "eAgentContactWrappedUp",
       (msg: Service.Aqm.Contact.AgentContact) => {
-        logger.info("AgentContact eAgentContactWrappedUp: ", msg);
-        this.responseData = msg.data;
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact wrapped$$$$$$$$$$$$$$$$$$$$$"); 
       }
     );
  
+    Desktop.agentStateInfo.addEventListener("updated", (updatedList: any) => {
+      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ agent state updated $$$$$$$$$$$$$$$$$$$$$"); 
+      });
 
 
   }
@@ -76,64 +75,64 @@ export default class CustomerJourneyWidget extends LitElement {
     return styles;
   }
 
-  async connectedCallback() {
-    super.connectedCallback();
-
-    await Desktop.config.init();
-
-  //   this.getCurrentInteractionId();
-    this.subscribeAgentContactDataEvents();
-  //   this.subscribeDialerEvents();
-  //   this.subscribeScreenpopEvent();
+  constructor(){
+    super()
   }
+
+  async firstUpdated(changeProperties: PropertyValues) {
+    super.firstUpdated(changeProperties);
+    try {
+      setTimeout(async () => {
+        await Desktop.config.init();
+        this.subscribeAgentContactDataEvents();
+      }, 2000);
+    } catch (e) {
+      console.error("error while initializing sdk", e);
+    }
+  }
+
+
 
   disconnectedCallback() {
     super.disconnectedCallback();
     Desktop.agentContact.removeAllEventListeners();
-    // Desktop.dialer.removeAllEventListeners();
-    // Desktop.screenpop.removeAllEventListeners();
   }
 
   handleButtonClick() {
-    console.log('button clicked')
-    
-    this.showSummary = !this.showSummary
-    console.log(this.showSummary)
+    this.showSummary = false
   }
 
   @property() showSummary = true
 
- @property() textToEdit = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut
-  ultricies lorem sem, id placerat massa rutrum eu. Sed dui neque,
-  tincidunt quis sapien in, aliquam dignissim nulla. Vestibulum
-  mollis at orci ac facilisis. Sed ut aliquam nunc. Suspendisse eu
-  interdum odio. Sed libero dui, malesuada ac vulputate id,
-  vulputate vel nisi. Proin id egestas mi. Fusce ut sem nibh.
-  Vivamus aliquet accumsan feugiat. Etiam accumsan tortor quis
-  ultrices tempus. Aenean porta feugiat ex. Praesent dictum mauris
-  et dui posuere aliquet et non arcu. Sed eget aliquam elit. Nullam
-  ornare ipsum quis feugiat tincidunt. Nullam a libero sed enim
-  dictum convallis. Suspendisse egestas elit risus, at ultrices
-  massa blandit eget. Vivamus dapibus bibendum nisl, eget cursus
-  risus ultrices et. Quisque felis tortor, accumsan vel tempus quis,
-  rutrum sed urna. Nulla quis magna et eros facilisis blandit. Nunc
-  mattis urna eget diam accumsan, non vehicula est aliquet. Etiam
-  vestibulum dui neque, faucibus sollicitudin nibh vestibulum vel.
-  Nullam semper porta ipsum non varius. Vestibulum sollicitudin
-  ipsum mauris. Praesent quis nisi sagittis, malesuada lacus semper,
-  iaculis elit.`
+ @property() textToEdit = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies lorem sem, id placerat massa rutrum eu. Sed dui neque,
+  tincidunt quis sapien in, aliquam dignissim nulla. Vestibulum mollis at orci ac facilisis. Sed ut aliquam nunc. Suspendisse eu interdum odio. Sed libero dui, malesuada ac vulputate id,
+  vulputate vel nisi. Proin id egestas mi. Fusce ut sem nibh. Vivamus aliquet accumsan feugiat. Etiam accumsan tortor quisultrices tempus. Aenean porta feugiat ex. Praesent dictum mauris
+  et dui posuere aliquet et non arcu. Sed eget aliquam elit. Nullamornare ipsum quis feugiat tincidunt. Nullam a libero sed enimdictum convallis. Suspendisse egestas elit risus, at ultrices
+  massa blandit eget. Vivamus dapibus bibendum nisl, eget cursus risus ultrices et. Quisque felis tortor, accumsan vel tempus quis,
+  rutrum sed urna. Nulla quis magna et eros facilisis blandit. Nuncmattis urna eget diam accumsan, non vehicula est aliquet. Etiam
+  vestibulum dui neque, faucibus sollicitudin nibh vestibulum vel.Nullam semper porta ipsum non varius. Vestibulum sollicitudin
+  ipsum mauris. Praesent quis nisi sagittis, malesuada lacus semper, iaculis elit.`
 
   render() {
     return html`
-    ${
-      this.showSummary ? 
-      html`<div class="some-class">
+    <md-theme class="theme-toggle" id="modal">
+    <md-modal
+      .show=${this.showSummary}
+      headerLabel="Call Summary"
+      closeBtnName="Reject"
+      .showCloseButton="${true}"
+      .backdropClickExit="${true}"
+      ?hideFooter=${true}
+      ?hideHeader=${false}
+      @close-modal=${this.handleButtonClick}
+    >
       <md-editable-field content=${this.textToEdit}></md-editable-field>
-      <div class="some-class">
-      <md-button @button-click=${this.handleButtonClick}>Submit</md-button>
-      <div>
-    </div>
-    ` : null }`
+      <div slot="footer">
+        <md-button @button-click=${this.handleButtonClick} color="blue">Accept</md-button>
+        <md-button @button-click=${this.handleButtonClick}>Reject</md-button>
+      </div>
+    </md-modal>
+  </md-theme>`
   }
 }
 
