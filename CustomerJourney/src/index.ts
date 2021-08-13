@@ -65,9 +65,17 @@ export default class CustomerJourneyWidget extends LitElement {
     );
  
     Desktop.agentStateInfo.addEventListener("updated", async (updatedList: any) => {
+
+      for(let i = 0; i < updatedList.length; i++){
+        console.log("this is the list of updates", updatedList[i])
+        if(updatedList[i].name === "subStatus"){
+          console.log("updated list substatus has been udpated")
+          this.showSummary = true
+        }
+      }
       console.log("########################## agent state updated ######################", this.showSummary); 
       });
-      this.showSummary = true
+      
       // await this.requestUpdate('show', oldVal)
       console.log('this is the new summary state', this.showSummary)
   }
