@@ -22,8 +22,20 @@ export interface CustomerEvent {
 }
 export default class CustomerJourneyWidget extends LitElement {
     showSummary: boolean;
-    subscribeAgentContactDataEvents(): void;
+    subscribeAgentContactDataEvents(): Promise<void>;
     static get styles(): import("lit-element").CSSResult;
+    static get properties(): {
+        showSummary: {
+            type: NumberConstructor;
+            /**
+             * Compare myProp's new value with its old value.
+             *
+             * Only consider myProp to have changed if newVal is larger than
+             * oldVal.
+             */
+            hasChanged(newVal: any, oldVal: any): boolean;
+        };
+    };
     constructor();
     firstUpdated(changeProperties: PropertyValues): Promise<void>;
     disconnectedCallback(): void;

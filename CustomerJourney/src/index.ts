@@ -49,7 +49,7 @@ export default class CustomerJourneyWidget extends LitElement {
     @property() showSummary = false
 
 
-  subscribeAgentContactDataEvents() {
+  async subscribeAgentContactDataEvents() {
 
     Desktop.agentContact.addEventListener(
       "eAgentContactEnded",
@@ -64,16 +64,40 @@ export default class CustomerJourneyWidget extends LitElement {
       }
     );
  
-    Desktop.agentStateInfo.addEventListener("updated", (updatedList: any) => {
-      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ agent state updated $$$$$$$$$$$$$$$$$$$$$"); 
+    Desktop.agentStateInfo.addEventListener("updated", async (updatedList: any) => {
+      console.log("########################## agent state updated ######################", this.showSummary); 
       });
       this.showSummary = true
-      this.requestUpdate()
+      // await this.requestUpdate('show', oldVal)
       console.log('this is the new summary state', this.showSummary)
   }
 
+
   static get styles() {
     return styles;
+  }
+
+  static get properties(){ return {
+    showSummary: {
+      type: Number,
+
+      /**
+       * Compare myProp's new value with its old value.
+       *
+       * Only consider myProp to have changed if newVal is larger than
+       * oldVal.
+       */
+      hasChanged(newVal: any, oldVal: any) {
+        if (newVal > oldVal) {
+          console.log(`${newVal} > ${oldVal}. hasChanged: true.`);
+          return true;
+        }
+        else {
+          console.log(`${newVal} <= ${oldVal}. hasChanged: false.`);
+          return false;
+        }
+      }
+    }};
   }
 
   constructor(){
@@ -100,6 +124,7 @@ export default class CustomerJourneyWidget extends LitElement {
 
   handleButtonClick() {
     this.showSummary = false
+    this.requestUpdate()
   }
 
  
