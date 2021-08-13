@@ -68,6 +68,8 @@ export default class CustomerJourneyWidget extends LitElement {
       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ agent state updated $$$$$$$$$$$$$$$$$$$$$"); 
       });
       this.showSummary = true
+      this.requestUpdate()
+      console.log('this is the new summary state', this.showSummary)
   }
 
   static get styles() {
@@ -89,7 +91,6 @@ export default class CustomerJourneyWidget extends LitElement {
       console.error("error while initializing sdk", e);
     }
   }
-
 
 
   disconnectedCallback() {
