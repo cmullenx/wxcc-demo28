@@ -54,15 +54,17 @@ export default class CustomerJourneyWidget extends LitElement {
     Desktop.agentContact.addEventListener(
       "eAgentContactEnded",
       (msg: Service.Aqm.Contact.AgentContact) => {
-        
+        console.log("before setting summary to true")
         this.showSummary = true
         console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact ended$$$$$$$$$$$$$$$$$$$$$", this.showSummary); 
       }
     );
     Desktop.agentContact.addEventListener(
-      "eAgentContactWrappedUp",
+      "eAgentWrapup",
       (msg: Service.Aqm.Contact.AgentContact) => {
         console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact wrapped$$$$$$$$$$$$$$$$$$$$$"); 
+        this.showSummary = true
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact wrapped with sum$$$$$$$$$$$$$$$$$$$$$", this.showSummary);
       }
     );
  
