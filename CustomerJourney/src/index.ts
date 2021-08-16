@@ -18,6 +18,7 @@ import {
 } from "lit-element";
 import { nothing } from "lit-html";
 import { classMap } from "lit-html/directives/class-map";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { customElementWithCheck } from "./mixins/CustomElementCheck";
 import styles from "./assets/styles/View.scss";
 import { DateTime } from "luxon";
@@ -26,8 +27,10 @@ import { ServerSentEvent } from "./types/cjaas";
 import { EventSourceInitDict } from "eventsource";
 import "@cjaas/common-components/dist/comp/cjaas-timeline-item";
 
+
 import { Desktop } from "@wxcc-desktop/sdk";
 import { Service } from "@wxcc-desktop/sdk-types";
+import { jsxText } from "@babel/types";
 export interface CustomerEvent {
   data: Record<string, any>;
   firstName: string;
@@ -46,8 +49,13 @@ export interface CustomerEvent {
 export default class CustomerJourneyWidget extends LitElement {
   
 
-    @property() showSummary = false
+  @property() taskId: string | undefined
+  @property() token: string | undefined
+  @internalProperty() showSummary = false
+  // TODO: set as false
+  @internalProperty() renderModal = true
 
+  @internalProperty() summary = ''
 
   async subscribeAgentContactDataEvents() {
 
@@ -55,16 +63,16 @@ export default class CustomerJourneyWidget extends LitElement {
       "eAgentContactEnded",
       (msg: Service.Aqm.Contact.AgentContact) => {
         console.log("before setting summary to true")
-        this.showSummary = true
-        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact ended$$$$$$$$$$$$$$$$$$$$$", this.showSummary); 
+       this.renderModal = true
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact ended$$$$$$$$$$$$$$$$$$$$$",this.renderModal); 
       }
     );
     Desktop.agentContact.addEventListener(
       "eAgentWrapup",
       (msg: Service.Aqm.Contact.AgentContact) => {
         console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact wrapped$$$$$$$$$$$$$$$$$$$$$"); 
-        this.showSummary = true
-        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact wrapped with sum$$$$$$$$$$$$$$$$$$$$$", this.showSummary);
+       this.renderModal = true
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact wrapped with sum$$$$$$$$$$$$$$$$$$$$$",this.renderModal);
       }
     );
  
@@ -74,15 +82,41 @@ export default class CustomerJourneyWidget extends LitElement {
         console.log("this is the list of updates", updatedList[i])
         if(updatedList[i].name === "subStatus"){
           console.log("updated list substatus has been udpated")
-          this.showSummary = true
+         this.renderModal = true
         }
       }
-      console.log("########################## agent state updated ######################", this.showSummary); 
+      console.log("########################## agent state updated ######################",this.renderModal); 
       });
       
       // await this.requestUpdate('show', oldVal)
-      console.log('this is the new summary state', this.showSummary)
+      console.log('this is the new summary state',this.renderModal)
   }
+
+  async getSummary(){
+
+    console.log('this is token', this.token, 'taskid', this.taskId)
+    const httpsConfig: any = {
+      headers: {
+        Authorization: `Bearer Y2JkNzQyNzctN2I5NC00ODQyLWI3YmYtMjJkNWYxNDAyMWMyNzhjNTQxNWItOGY3_A52D_348adfa2-b8f0-405c-a516-da004eefde5f`,
+        'Content-Type': 'application/json',
+      },
+    }
+    return axios
+      .get(
+        'http://localhost:8081/summary?taskIds=4fe2bbbc-fcdb-4e5f-9ddc-83c5cccc40db',
+        httpsConfig
+      )
+      .then((resp: AxiosResponse) => {
+        console.log('this is the resp', resp)
+        this.showSummary = true
+        this.summary = resp.data
+      })
+      .catch((err: AxiosError) => {
+        console.error(`Error retrieving data from captures: ${err}`)
+        throw Error(`${err}`)
+      })
+  }
+
 
 
   static get styles() {
@@ -90,8 +124,8 @@ export default class CustomerJourneyWidget extends LitElement {
   }
 
   static get properties(){ return {
-    showSummary: {
-      type: Number,
+    renderModal: {
+      type: Boolean,
 
       /**
        * Compare myProp's new value with its old value.
@@ -109,8 +143,16 @@ export default class CustomerJourneyWidget extends LitElement {
           return false;
         }
       }
-    }};
+    },
+    showSummary: {
+      type: Boolean
+    },
+    summary: {
+      type: String
+    }
+  };
   }
+
 
   constructor(){
     super()
@@ -119,6 +161,7 @@ export default class CustomerJourneyWidget extends LitElement {
   async firstUpdated(changeProperties: PropertyValues) {
     super.firstUpdated(changeProperties);
     try {
+      this.getSummary()
       setTimeout(async () => {
         await Desktop.config.init();
         this.subscribeAgentContactDataEvents();
@@ -127,6 +170,7 @@ export default class CustomerJourneyWidget extends LitElement {
       console.error("error while initializing sdk", e);
     }
   }
+
 
 
   disconnectedCallback() {
@@ -141,20 +185,20 @@ export default class CustomerJourneyWidget extends LitElement {
 
  
 
- @property() textToEdit = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies lorem sem, id placerat massa rutrum eu. Sed dui neque,
-  tincidunt quis sapien in, aliquam dignissim nulla. Vestibulum mollis at orci ac facilisis. Sed ut aliquam nunc. Suspendisse eu interdum odio. Sed libero dui, malesuada ac vulputate id,
-  vulputate vel nisi. Proin id egestas mi. Fusce ut sem nibh. Vivamus aliquet accumsan feugiat. Etiam accumsan tortor quisultrices tempus. Aenean porta feugiat ex. Praesent dictum mauris
-  et dui posuere aliquet et non arcu. Sed eget aliquam elit. Nullamornare ipsum quis feugiat tincidunt. Nullam a libero sed enimdictum convallis. Suspendisse egestas elit risus, at ultrices
-  massa blandit eget. Vivamus dapibus bibendum nisl, eget cursus risus ultrices et. Quisque felis tortor, accumsan vel tempus quis,
-  rutrum sed urna. Nulla quis magna et eros facilisis blandit. Nuncmattis urna eget diam accumsan, non vehicula est aliquet. Etiam
-  vestibulum dui neque, faucibus sollicitudin nibh vestibulum vel.Nullam semper porta ipsum non varius. Vestibulum sollicitudin
-  ipsum mauris. Praesent quis nisi sagittis, malesuada lacus semper, iaculis elit.`
+//  @property() textToEdit = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies lorem sem, id placerat massa rutrum eu. Sed dui neque,
+//   tincidunt quis sapien in, aliquam dignissim nulla. Vestibulum mollis at orci ac facilisis. Sed ut aliquam nunc. Suspendisse eu interdum odio. Sed libero dui, malesuada ac vulputate id,
+//   vulputate vel nisi. Proin id egestas mi. Fusce ut sem nibh. Vivamus aliquet accumsan feugiat. Etiam accumsan tortor quisultrices tempus. Aenean porta feugiat ex. Praesent dictum mauris
+//   et dui posuere aliquet et non arcu. Sed eget aliquam elit. Nullamornare ipsum quis feugiat tincidunt. Nullam a libero sed enimdictum convallis. Suspendisse egestas elit risus, at ultrices
+//   massa blandit eget. Vivamus dapibus bibendum nisl, eget cursus risus ultrices et. Quisque felis tortor, accumsan vel tempus quis,
+//   rutrum sed urna. Nulla quis magna et eros facilisis blandit. Nuncmattis urna eget diam accumsan, non vehicula est aliquet. Etiam
+//   vestibulum dui neque, faucibus sollicitudin nibh vestibulum vel.Nullam semper porta ipsum non varius. Vestibulum sollicitudin
+//   ipsum mauris. Praesent quis nisi sagittis, malesuada lacus semper, iaculis elit.`
 
   render() {
     return html`
     <md-theme class="theme-toggle" id="modal">
     <md-modal
-      .show=${this.showSummary}
+      .show=${this.renderModal}
       headerLabel="Call Summary"
       closeBtnName="Reject"
       .showCloseButton="${true}"
@@ -163,11 +207,15 @@ export default class CustomerJourneyWidget extends LitElement {
       ?hideHeader=${false}
       @close-modal=${this.handleButtonClick}
     >
-      <md-editable-field content=${this.textToEdit}></md-editable-field>
+    ${this.showSummary ? 
+      html`
+      <md-editable-field content=${this.summary}></md-editable-field>
       <div slot="footer">
         <md-button @button-click=${this.handleButtonClick} color="blue">Accept</md-button>
         <md-button @button-click=${this.handleButtonClick}>Reject</md-button>
-      </div>
+      </div>` 
+    : html` <md-loading></md-loading>`}
+    
     </md-modal>
   </md-theme>`
   }

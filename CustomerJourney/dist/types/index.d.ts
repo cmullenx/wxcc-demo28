@@ -21,12 +21,17 @@ export interface CustomerEvent {
     type: string;
 }
 export default class CustomerJourneyWidget extends LitElement {
+    taskId: string | undefined;
+    token: string | undefined;
     showSummary: boolean;
+    renderModal: boolean;
+    summary: string;
     subscribeAgentContactDataEvents(): Promise<void>;
+    getSummary(): Promise<void>;
     static get styles(): import("lit-element").CSSResult;
     static get properties(): {
-        showSummary: {
-            type: NumberConstructor;
+        renderModal: {
+            type: BooleanConstructor;
             /**
              * Compare myProp's new value with its old value.
              *
@@ -35,12 +40,17 @@ export default class CustomerJourneyWidget extends LitElement {
              */
             hasChanged(newVal: any, oldVal: any): boolean;
         };
+        showSummary: {
+            type: BooleanConstructor;
+        };
+        summary: {
+            type: StringConstructor;
+        };
     };
     constructor();
     firstUpdated(changeProperties: PropertyValues): Promise<void>;
     disconnectedCallback(): void;
     handleButtonClick(): void;
-    textToEdit: string;
     render(): import("lit-element").TemplateResult;
 }
 declare global {
