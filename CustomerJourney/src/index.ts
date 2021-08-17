@@ -148,10 +148,20 @@ export default class CustomerJourneyWidget extends LitElement {
       setTimeout(async () => {
         await Desktop.config.init();
         this.subscribeAgentContactDataEvents();
-        this.getSummary()
       }, 2000);
     } catch (e) {
       console.error("error while initializing sdk", e);
+    }
+  }
+
+  updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties)
+
+    console.log('what is the value of this.task', this.taskId, 'changedProp', changedProperties)
+
+    if(changedProperties.has('taskId')){
+      console.log('changed properties includes taskid')
+      this.getSummary()
     }
   }
 

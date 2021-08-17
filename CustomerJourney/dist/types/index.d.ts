@@ -55,6 +55,7 @@ export default class CustomerJourneyWidget extends LitElement {
     };
     constructor();
     firstUpdated(changeProperties: PropertyValues): Promise<void>;
+    updated(changedProperties: PropertyValues): void;
     disconnectedCallback(): void;
     handleButtonClick(): void;
     render(): import("lit-element").TemplateResult;
