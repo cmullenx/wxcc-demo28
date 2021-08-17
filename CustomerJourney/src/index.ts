@@ -97,13 +97,13 @@ export default class CustomerJourneyWidget extends LitElement {
     console.log('this is token', this.token, 'taskid', this.taskId)
     const httpsConfig: any = {
       headers: {
-        Authorization: `Bearer MWJmMTM1ZDItODRlNy00N2JmLTk1NmUtMzg3NmE4ZmVhZjc2OWI4NzRmMWQtMmMy_A52D_bde75a64-f4d5-4ffc-a239-feb607c17ef8`,
+        Authorization: `Bearer MDk4ZTgxZGYtNGFkNy00OWQ2LWE5YTAtYTRhZjAwNWE2OTZiZDVhNWZjODAtZmJi_A52D_bde75a64-f4d5-4ffc-a239-feb607c17ef8`,
         'Content-Type': 'application/json',
       },
     }
     return axios
       .get(
-        'http://localhost:8081/summary?taskIds=560a9b9a-d6c0-47fd-85c7-783455a96eec',
+        `https://test-devportal-bff.devus1.ciscoccservice.com/taskids=${this.taskId}`,
         httpsConfig
       )
       .then((resp: AxiosResponse) => {
