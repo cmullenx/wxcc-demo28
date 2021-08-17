@@ -49,6 +49,9 @@ export default class CustomerJourneyWidget extends LitElement {
         taskId: {
             type: StringConstructor;
         };
+        token: {
+            type: StringConstructor;
+        };
     };
     constructor();
     firstUpdated(changeProperties: PropertyValues): Promise<void>;

@@ -129,6 +129,9 @@ export default class CustomerJourneyWidget extends LitElement {
     },
     taskId: {
       type: String
+    },
+    token: {
+      type: String
     }
   };
   }
