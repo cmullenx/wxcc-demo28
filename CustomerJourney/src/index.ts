@@ -49,11 +49,11 @@ export interface CustomerEvent {
 export default class CustomerJourneyWidget extends LitElement {
   
 
-  @property() taskId: string | undefined
+  @property() taskId: string | undefined = 'b614866b-0f1e-427f-a4da-a7162c74bac0'
   @property() token: string | undefined
   @internalProperty() showSummary = false
   // TODO: set as false
-  @internalProperty() renderModal = true
+  @internalProperty() renderModal = false
 
   @internalProperty() summary = ''
 
@@ -80,7 +80,7 @@ export default class CustomerJourneyWidget extends LitElement {
     }
     return axios
       .get(
-        `https://test-devportal-bff.devus1.ciscoccservice.com//summary?taskIds=${this.taskId}`,
+        `https://test-devportal-bff.devus1.ciscoccservice.com/summary?taskIds=${this.taskId}`,
         httpsConfig
       )
       .then((resp: AxiosResponse) => {
@@ -141,6 +141,7 @@ export default class CustomerJourneyWidget extends LitElement {
   async firstUpdated(changeProperties: PropertyValues) {
     super.firstUpdated(changeProperties);
     try {
+      // this.getSummary()
       setTimeout(async () => {
         await Desktop.config.init();
         this.subscribeAgentContactDataEvents();
