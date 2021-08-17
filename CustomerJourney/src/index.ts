@@ -62,39 +62,16 @@ export default class CustomerJourneyWidget extends LitElement {
     Desktop.agentContact.addEventListener(
       "eAgentContactEnded",
       (msg: Service.Aqm.Contact.AgentContact) => {
-        console.log("before setting summary to true")
        this.renderModal = true
         console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact ended$$$$$$$$$$$$$$$$$$$$$",this.renderModal); 
       }
     );
-    Desktop.agentContact.addEventListener(
-      "eAgentWrapup",
-      (msg: Service.Aqm.Contact.AgentContact) => {
-        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact wrapped$$$$$$$$$$$$$$$$$$$$$"); 
-       this.renderModal = true
-        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact wrapped with sum$$$$$$$$$$$$$$$$$$$$$",this.renderModal);
-      }
-    );
- 
-    Desktop.agentStateInfo.addEventListener("updated", async (updatedList: any) => {
-
-      for(let i = 0; i < updatedList.length; i++){
-        console.log("this is the list of updates", updatedList[i])
-        if(updatedList[i].name === "subStatus"){
-          console.log("updated list substatus has been udpated")
-         this.renderModal = true
-        }
-      }
-      console.log("########################## agent state updated ######################",this.renderModal); 
-      });
-      
-      // await this.requestUpdate('show', oldVal)
-      console.log('this is the new summary state',this.renderModal)
+  
   }
 
   async getSummary(){
 
-    console.log('this is token', this.token, 'taskid', this.taskId)
+    console.log('this is taskid', this.taskId)
     const httpsConfig: any = {
       headers: {
         Authorization: `Bearer MDk4ZTgxZGYtNGFkNy00OWQ2LWE5YTAtYTRhZjAwNWE2OTZiZDVhNWZjODAtZmJi_A52D_bde75a64-f4d5-4ffc-a239-feb607c17ef8`,
@@ -103,7 +80,7 @@ export default class CustomerJourneyWidget extends LitElement {
     }
     return axios
       .get(
-        `https://test-devportal-bff.devus1.ciscoccservice.com/taskids=${this.taskId}`,
+        `https://test-devportal-bff.devus1.ciscoccservice.com//summary?taskIds=${this.taskId}`,
         httpsConfig
       )
       .then((resp: AxiosResponse) => {
@@ -149,6 +126,9 @@ export default class CustomerJourneyWidget extends LitElement {
     },
     summary: {
       type: String
+    },
+    taskId: {
+      type: String
     }
   };
   }
@@ -161,10 +141,10 @@ export default class CustomerJourneyWidget extends LitElement {
   async firstUpdated(changeProperties: PropertyValues) {
     super.firstUpdated(changeProperties);
     try {
-      this.getSummary()
       setTimeout(async () => {
         await Desktop.config.init();
         this.subscribeAgentContactDataEvents();
+        this.getSummary()
       }, 2000);
     } catch (e) {
       console.error("error while initializing sdk", e);
