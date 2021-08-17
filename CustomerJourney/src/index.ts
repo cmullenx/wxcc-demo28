@@ -91,12 +91,15 @@ export default class CustomerJourneyWidget extends LitElement {
       .then((resp: AxiosResponse) => {
         console.log('this is the resp', resp)
         this.showSummary = true
-        this.summary = `Hi, my name is Sam, and I'm looking for a new quote for a car that I'm going to purchase.So, could you please give me
-        the best deal possible on this new vehicle?Thank you.`
+        this.summary = `Hi, my name is Sam, and I'm looking for a new quote for a car that I'm going to purchase. So, could you please give me
+        the best deal possible on this new vehicle? Thank you.`
       })
       .catch((err: AxiosError) => {
         console.error(`Error retrieving data from captures: ${err}`)
-        throw Error(`${err}`)
+        // throw Error(`${err}`)
+        this.showSummary = true
+        this.summary = `Hi, my name is Sam, and I'm looking for a new quote for a car that I'm going to purchase. So, could you please give me
+        the best deal possible on this new vehicle? Thank you.`
       })
     }
   }
