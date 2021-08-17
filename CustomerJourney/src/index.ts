@@ -64,6 +64,10 @@ export default class CustomerJourneyWidget extends LitElement {
       (msg: Service.Aqm.Contact.AgentContact) => {
        this.renderModal = true
         console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ contact ended$$$$$$$$$$$$$$$$$$$$$",this.renderModal); 
+        setTimeout(()=>{
+          console.log('calling getsuMMARY')
+          this.getSummary()
+        }, 5000)
       }
     );
   
@@ -71,6 +75,7 @@ export default class CustomerJourneyWidget extends LitElement {
 
   async getSummary(){
 
+    if(this.taskId){
     console.log('this is taskid', this.taskId)
     const httpsConfig: any = {
       headers: {
@@ -92,6 +97,7 @@ export default class CustomerJourneyWidget extends LitElement {
         console.error(`Error retrieving data from captures: ${err}`)
         throw Error(`${err}`)
       })
+    }
   }
 
 
@@ -157,11 +163,8 @@ export default class CustomerJourneyWidget extends LitElement {
   updated(changedProperties: PropertyValues) {
     super.updated(changedProperties)
 
-    console.log('what is the value of this.task', this.taskId, 'changedProp', changedProperties)
-
-    if(changedProperties.has('taskId')){
+    if(changedProperties.has('taskId') && this.taskId){
       console.log('changed properties includes taskid')
-      this.getSummary()
     }
   }
 
