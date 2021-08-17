@@ -49,7 +49,7 @@ export interface CustomerEvent {
 export default class CustomerJourneyWidget extends LitElement {
   
 
-  @property() taskId: string | undefined = 'b614866b-0f1e-427f-a4da-a7162c74bac0'
+  @property() taskId: string | undefined
   @property() token: string | undefined
   @internalProperty() showSummary = false
   // TODO: set as false
@@ -74,7 +74,7 @@ export default class CustomerJourneyWidget extends LitElement {
     console.log('this is taskid', this.taskId)
     const httpsConfig: any = {
       headers: {
-        Authorization: `Bearer MDk4ZTgxZGYtNGFkNy00OWQ2LWE5YTAtYTRhZjAwNWE2OTZiZDVhNWZjODAtZmJi_A52D_bde75a64-f4d5-4ffc-a239-feb607c17ef8`,
+        Authorization: `Bearer ${this.token}`,
         'Content-Type': 'application/json',
       },
     }
