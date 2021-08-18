@@ -85,7 +85,7 @@ export default class CustomerJourneyWidget extends LitElement {
     }
     return axios
       .get(
-        `https://test-devportal-bff.devus1.ciscoccservice.com/ping`,
+        `https://test-devportal-bff.devus1.ciscoccservice.com/summary?taskIds=${this.taskId}`,
         httpsConfig
       )
       .then((resp: AxiosResponse) => {
