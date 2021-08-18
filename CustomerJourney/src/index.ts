@@ -180,7 +180,7 @@ export default class CustomerJourneyWidget extends LitElement {
   }
 
   handleButtonClick() {
-    this.showSummary = false
+    this.renderModal = false
     this.requestUpdate()
   }
 
