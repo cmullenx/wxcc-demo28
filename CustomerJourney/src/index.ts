@@ -41,11 +41,11 @@ export default class CustomerJourneyWidget extends LitElement {
 
   @property() taskId: string | undefined
   @property() token: string | undefined
-  @internalProperty() showSummary = true
+  @internalProperty() showSummary = false
   // TODO: set as false
-  @internalProperty() renderModal = true
+  @internalProperty() renderModal = false
 
-  @internalProperty() summary = 'test'
+  @internalProperty() summary = ''
 
 
   async subscribeAgentContactDataEvents() {
