@@ -8,5 +8,8 @@
   },
   "scripts": {
     "build-all": "cd ProfileView && yarn && yarn dist && open . && cd ../CustomerJourney && yarn && yarn dist && open . && cd ../ActionBuilder && yarn && yarn dist && open . && cd ../Timeline && yarn && yarn dist && open ."
+  },
+  "dependencies": {
+    "@tinymce/tinymce-webcomponent": "^1.2.0"
   }
 }

@@ -8,29 +8,19 @@
 
 // This file imports all of the webcomponents from "components" folder
 
-import {
-  html,
-  internalProperty,
-  property,
-  LitElement,
-  PropertyValues,
-  query,
-} from "lit-element";
-import { nothing } from "lit-html";
-import { classMap } from "lit-html/directives/class-map";
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { customElementWithCheck } from "./mixins/CustomElementCheck";
-import styles from "./assets/styles/View.scss";
-import { DateTime } from "luxon";
-import { Button, ButtonGroup, Input } from "@momentum-ui/web-components";
-import { ServerSentEvent } from "./types/cjaas";
-import { EventSourceInitDict } from "eventsource";
 import "@cjaas/common-components/dist/comp/cjaas-timeline-item";
-
-
+import '@tinymce/tinymce-webcomponent/dist/tinymce-webcomponent.js';
 import { Desktop } from "@wxcc-desktop/sdk";
 import { Service } from "@wxcc-desktop/sdk-types";
-import { jsxText } from "@babel/types";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import {
+  html,
+  internalProperty, LitElement, property, PropertyValues
+} from "lit-element";
+import styles from "./assets/styles/View.scss";
+import { customElementWithCheck } from "./mixins/CustomElementCheck";
+
+
 export interface CustomerEvent {
   data: Record<string, any>;
   firstName: string;
@@ -51,11 +41,12 @@ export default class CustomerJourneyWidget extends LitElement {
 
   @property() taskId: string | undefined
   @property() token: string | undefined
-  @internalProperty() showSummary = false
+  @internalProperty() showSummary = true
   // TODO: set as false
-  @internalProperty() renderModal = false
+  @internalProperty() renderModal = true
 
-  @internalProperty() summary = ''
+  @internalProperty() summary = 'test'
+
 
   async subscribeAgentContactDataEvents() {
 
@@ -67,7 +58,7 @@ export default class CustomerJourneyWidget extends LitElement {
         setTimeout(()=>{
           console.log('calling getsuMMARY')
           this.getSummary()
-        }, 5000)
+        }, 2000)
       }
     );
   
@@ -85,7 +76,7 @@ export default class CustomerJourneyWidget extends LitElement {
     }
     return axios
       .get(
-        `https://test-devportal-bff.devus1.ciscoccservice.com/summary?taskIds=${this.taskId}`,
+        `https://demo-devportal-bff.devus1.ciscoccservice.com/summary?taskIds=${this.taskId}`,
         httpsConfig
       )
       .then((resp: AxiosResponse) => {
@@ -95,10 +86,14 @@ export default class CustomerJourneyWidget extends LitElement {
       })
       .catch((err: AxiosError) => {
         console.error(`Error retrieving data from captures: ${err}`)
-        // throw Error(`${err}`)
+      // show fake response if error
         this.showSummary = true
-        this.summary = `Hi, my name is Sam, and I'm looking for a new quote for a car that I'm going to purchase. So, could you please give me
-        the best deal possible on this new vehicle? Thank you.`
+
+        this.summary = `Sam called in regarding a possible data breach incident displayed alerts on her NetworkATX 1001 device. She wanted the threat analysis report. There were 5 attempts to breach the account. Account has been locked. Created the 24 Hour Unlock request.`
+      })
+      .finally(()=>{
+        // reset task id
+        this.taskId = ''
       })
     }
   }
@@ -167,7 +162,7 @@ export default class CustomerJourneyWidget extends LitElement {
     super.updated(changedProperties)
 
     if(changedProperties.has('taskId') && this.taskId){
-      console.log('changed properties includes taskid')
+      console.log('changed properties includes taskid call')
     }
   }
 
@@ -181,6 +176,32 @@ export default class CustomerJourneyWidget extends LitElement {
   handleButtonClick() {
     this.renderModal = false
     this.requestUpdate()
+  }
+
+  handleSubmit() {
+    this.renderModal = false
+    this.requestUpdate()
+
+    const httpsConfig: any = {
+      headers: {
+        Authorization: `SharedAccessSignature so=demoassure&sn=sandbox&ss=ds&sp=w&se=2022-08-10T22:48:49.845Z&sk=sandbox&sig=amWJ3lcl1eVLkpbPwfo3A8x4Xq5k01ZMGUdwPVJ8RTQ%3D`,
+        'Content-Type': 'application/json',
+      },
+    }
+    
+    const postBody = { "data": { "summary": "Sam called in regarding a possible data breach incident displayed alerts on her NetworkATX 1001 device. She wanted the threat analysis report. There were 5 attempts to breach the account. Account has been locked. Created the 24 Hour Unlock request." }, "datacontenttype": "application/json", "id": "ac88ba5c-17bc-47e7-a9e2-ebbe422b7f21", "person": "551234-Sam", "source": "Contact", "specversion": "1.0", "time": new Date(), "type": "Summary" }
+
+    return axios
+    .post(
+      `https://uswest-nonprod.cjaas.cisco.com/v1/journey/events`,
+      postBody,
+      httpsConfig,
+    )
+    .then((resp: AxiosResponse) => {
+      console.log('this is the resp', resp)
+      this.showSummary = true
+      this.summary = resp.data
+    })
   }
 
  
@@ -209,9 +230,11 @@ export default class CustomerJourneyWidget extends LitElement {
     >
     ${this.showSummary ? 
       html`
-      <md-editable-field content=${this.summary}></md-editable-field>
+      <tinymce-editor api-key="qagffr3pkuv17a8on1afax661irst1hbr4e6tbv888sz91jc" height="522" menubar="false" plugins="lists link image emoticons" toolbar="styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link image emoticons">
+      ${this.summary}
+      </tinymce-editor>
       <div slot="footer">
-        <md-button @button-click=${this.handleButtonClick} color="blue">Accept</md-button>
+        <md-button @button-click=${this.handleSubmit} color="blue">Accept</md-button>
         <md-button @button-click=${this.handleButtonClick}>Reject</md-button>
       </div>` 
     : html` <md-loading></md-loading>`}

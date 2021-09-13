@@ -5,8 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { LitElement, PropertyValues } from "lit-element";
 import "@cjaas/common-components/dist/comp/cjaas-timeline-item";
+import '@tinymce/tinymce-webcomponent/dist/tinymce-webcomponent.js';
+import { LitElement, PropertyValues } from "lit-element";
 export interface CustomerEvent {
     data: Record<string, any>;
     firstName: string;
@@ -58,6 +59,7 @@ export default class CustomerJourneyWidget extends LitElement {
     updated(changedProperties: PropertyValues): void;
     disconnectedCallback(): void;
     handleButtonClick(): void;
+    handleSubmit(): Promise<void>;
     render(): import("lit-element").TemplateResult;
 }
 declare global {

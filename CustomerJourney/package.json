@@ -103,6 +103,8 @@
     }
   },
   "dependencies": {
+    "@lrnwebcomponents/rich-text-editor": "^4.0.0",
+    "@tinymce/tinymce-webcomponent": "^1.2.0",
     "@types/eventsource": "^1.1.5",
     "@wxcc-desktop/sdk": "^1.2.7",
     "@wxcc-desktop/sdk-types": "^1.0.3",
